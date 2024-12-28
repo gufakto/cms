@@ -1,11 +1,12 @@
 import { NextFunction, Request, Response } from "express";
 import { Auth } from "../dtos/auth";
-import { verifyPassword } from "../utils/utils";
+import { hashPassword, verifyPassword } from "../utils/utils";
 import { generateOTP, verifyOTP } from "../utils/otp";
 import { sendEmail } from "../utils/mailer";
 import { generateToken, verifyToken } from "../utils/jwt";
 import { AppDataSource } from "../data-source";
 import { User } from "../entity/user";
+import { UserCreate } from "../dtos/users";
 
 
 export const loginAuth = async (req: Request<{}, {}, Auth>, res: Response, next: NextFunction) => {
@@ -68,3 +69,14 @@ export const authenticate = (req: Request, res: Response, next: NextFunction) =>
         res.status(401).send('Invalid token');
     }
 };
+
+export const register = async (req: Request<{}, {}, UserCreate>, res: Response, next: NextFunction) => {
+    try {
+        req.body.password = await hashPassword(req.body.password);
+        const repo = AppDataSource.getRepository(User).create(req.body);
+        const results = await AppDataSource.getRepository(User).save(repo)
+        res.status(201).send(results)
+    } catch(e: any) {
+        next(e);
+    }
+}
