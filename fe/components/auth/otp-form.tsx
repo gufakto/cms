@@ -3,7 +3,7 @@ import * as z from "zod";
 import { useState, useTransition } from "react";
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { LoginSchema, VerifyOTP } from "@/schemas";
+import { VerifyOTP } from "@/schemas";
 import {
     Form,
     FormControl,
@@ -18,7 +18,7 @@ import { Button } from "@/components/ui/button";
 import { FormError } from "@/components/form-error";
 import { FormSuccess } from "@/components/form-success";
 import { useSearchParams } from "next/navigation";
-// import { otpVerifyFn } from "@/actions/otp";
+import { otpVerifyFn } from "@/actions/otp";
 
 const OtpForm = () => {
     const searchParams = useSearchParams()
@@ -29,25 +29,24 @@ const OtpForm = () => {
     const [isPending, startTransition] = useTransition();
 
     const form = useForm<z.infer<typeof VerifyOTP>>({
-        resolver: zodResolver(LoginSchema),
+        resolver: zodResolver(VerifyOTP),
         defaultValues: {
-            email: "",
+            email: email || "",
             verifycode: ""
         },
     });
 
     const onSubmit = (values: z.infer<typeof VerifyOTP>) => {
-        console.log("FDFD", values)
         setError("");
         setSuccess("");
-        // startTransition( async () => {
-        //     const res = await otpVerifyFn(values)
-        //     if(res?.error) setError(res.error)
-        //     if(res?.success){
-        //         setSuccess(res.success)
-        //         console.log(res.data);
-        //     }
-        // });
+        startTransition( async () => {
+            const res = await otpVerifyFn(values)
+            if(res?.error) setError(res.error)
+            if(res?.success){
+                setSuccess(res.success)
+                console.log(res.data);
+            }
+        });
     }
         
     return (
@@ -102,7 +101,7 @@ const OtpForm = () => {
                     <FormError message={error}/>
                     <FormSuccess message={success}/>
                     <Button
-                        // disabled={isPending}
+                        disabled={isPending}
                         type="submit"
                         className="w-full"
                     >
