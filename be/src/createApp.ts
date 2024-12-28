@@ -6,6 +6,7 @@ import { json } from 'body-parser';
 import { errorHandler } from './middlewares/errors';
 import { AppDataSource } from './data-source';
 import authRoutes from "./routes/auth"
+import cors from "cors";
 
 export const createApp = () =>{
     AppDataSource
@@ -17,6 +18,11 @@ export const createApp = () =>{
         console.error("Error during Data Source initialization:", err)
     })
     const app = express();
+
+    app.use(cors({
+        origin: "*"
+    }))
+
     app.use(json())
     app.use("/api", userRouter);
     app.use('/api/auth', authRoutes);

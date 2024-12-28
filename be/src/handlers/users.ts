@@ -19,13 +19,13 @@ export const getUsers = async (req: Request<{}, {}, {}, UserPaginationParams>, r
         skip,
         take,
     });
-    const paginate: UserPaginate = {
+    const paginate: UserPaginate<User> = {
         page: page,
         pageSize: pageSize,
         total: total,
         data: users
     }
-    const result: ResponseOut<UserPaginate> = {
+    const result: ResponseOut<UserPaginate<User>> = {
         status: 200,
         message: "data found",
         data: paginate,
@@ -38,12 +38,12 @@ export const getUser = async (req: Request<{id: number}, {}, {}>, res: Response)
         const repo = AppDataSource.getRepository(User);
         const response = await repo.findOneByOrFail({ id: req.params.id })
         const userOut: UserOut = {
-            id: response!.id,
-            name: response!.name,
-            email: response!.email,
-            phone: response!.phone,
-            created_at: response!.created_at,
-            updated_at: response!.updated_at
+            id: response.id,
+            name: response.name as string,
+            email: response.email,
+            phone: response.phone as string,
+            created_at: response.created_at,
+            updated_at: response.updated_at
         }
         const results: ResponseOut<UserOut> = {
             status: 200,
@@ -65,6 +65,7 @@ export const createUser = async (req: Request<{}, {}, UserCreate>, res: Response
 }
 
 export const updateUser = async (req: Request<{id: number}, {}, UpdateUserParams>, res: Response, next: NextFunction) => {
+    
     const id = req.params.id;
     const name = req.body.name;
     const email = req.body.email;

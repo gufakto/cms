@@ -14,11 +14,11 @@ export interface UserOut{
     updated_at: Date
 }
 
-export interface UserPaginate {
+export interface UserPaginate<T> {
     page: number
     pageSize: number
     total: number
-    data: UserOut[]
+    data: T[]
 }
 
 export interface UpdateUserParams {

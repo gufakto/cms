@@ -2,6 +2,9 @@ import type { NextConfig } from "next";
 import { config } from "process";
 
 const nextConfig: NextConfig = {
+  publicRuntimeConfig: {
+    apiUrl: process.env.BACKEND_API || "http://localhost:3000",
+  },
   experimental: {
     turbo: {
       minify: true,
