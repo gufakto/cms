@@ -18,9 +18,9 @@ router.post('/login', async (req: Request, res: Response, next: NextFunction) =>
     await loginAuth(req, res, next)
 });
 
-router.post('/verify-otp', (req: Request, res: Response, next: NextFunction) => {
+router.post('/verify-otp', async (req: Request, res: Response, next: NextFunction) => {
     /* #swagger.tags = ['Auth'] */
-    verifyOTPRoutes(req, res, next);
+    await verifyOTPRoutes(req, res, next);
 });
 
 export default router;

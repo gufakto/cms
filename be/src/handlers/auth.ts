@@ -3,35 +3,28 @@ import { Auth } from "../dtos/auth";
 import { verifyPassword } from "../utils/utils";
 import { generateOTP, verifyOTP } from "../utils/otp";
 import { sendEmail } from "../utils/mailer";
-import bcrypt from 'bcryptjs';
 import { generateToken, verifyToken } from "../utils/jwt";
 import { AppDataSource } from "../data-source";
 import { User } from "../entity/user";
 
-const users: { [key: string]: { password: string } } = {
-    'user@example.com': { password: bcrypt.hashSync('qwe123qwe', 10) },
-};
 
 export const loginAuth = async (req: Request<{}, {}, Auth>, res: Response, next: NextFunction) => {
     try {
         const { email, password } = req.body;
 
         if (!email || !password) {
-            res.status(400).send({message: 'Email and password are required'});
-            next()
+            return res.status(400).send({message: 'Email and password are required'});
         }
 
         const repo = AppDataSource.getRepository(User);
         const data = await repo.findOneBy({ email: email })
         if (!data) {
-            res.status(401).send({message: 'Invalid email or password'});
-            next()
+            return res.status(401).send({message: 'Invalid email or password'});
         }
 
         const check = await verifyPassword(password, data!.password);
         if (!check) {
-            res.status(401).send({message: 'Invalid email or password'});
-            next()
+            return res.status(401).send({message: 'Invalid email or password'});
         }
 
         const otp = generateOTP(email);
@@ -42,19 +35,24 @@ export const loginAuth = async (req: Request<{}, {}, Auth>, res: Response, next:
     }
 }
 
-export const verifyOTPRoutes = (req: Request, res: Response, next: NextFunction) => {
-    const { email, otp } = req.body;
+export const verifyOTPRoutes = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { email, otp } = req.body;
+        const repo = AppDataSource.getRepository(User);
+        const response = await repo.findOneBy({ email: email })
+        if(response===null) {
+            res.status(401).send({message: 'Your account is not registered yet!'});
+        }
+        if (!verifyOTP(email, otp)) {
+            res.status(401).send({message: 'Invalid or expired OTP'});
+        }
 
-    if (!verifyOTP(email, otp)) {
-        res.status(401).send('Invalid or expired OTP');
-        next()
+        const token = generateToken({ email }); 
+        res.status(200).send({ token });
+    } catch(e: any) {
+        next(e);
     }
-
-    const token = generateToken({ email });
-    res.status(200).send({ token });
-}
-
-
+} 
 
 export const authenticate = (req: Request, res: Response, next: NextFunction) => {
     const token = req.headers.authorization?.split(' ')[1];
