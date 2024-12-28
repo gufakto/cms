@@ -17,26 +17,26 @@ export const loginAuth = async (req: Request<{}, {}, Auth>, res: Response, next:
         const { email, password } = req.body;
 
         if (!email || !password) {
-            res.status(400).send('Email and password are required');
+            res.status(400).send({message: 'Email and password are required'});
             next()
         }
 
         const repo = AppDataSource.getRepository(User);
         const data = await repo.findOneBy({ email: email })
         if (!data) {
-            res.status(401).send('Invalid email or password');
+            res.status(401).send({message: 'Invalid email or password'});
             next()
         }
 
         const check = await verifyPassword(password, data!.password);
         if (!check) {
-            res.status(401).send('Invalid email or password');
+            res.status(401).send({message: 'Invalid email or password'});
             next()
         }
 
         const otp = generateOTP(email);
         await sendEmail(email, 'Your OTP Code', `Your OTP is: ${otp}`);
-        res.status(200).send('OTP sent');
+        res.status(200).send({message: 'OTP sent'});
     } catch (error) {
         next(error); // Proper error handling
     }

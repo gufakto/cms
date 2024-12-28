@@ -3,7 +3,7 @@ import * as z from "zod";
 import { useState, useTransition } from "react";
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { LoginSchema } from "@/schemas";
+import { LoginSchema, VerifyOTP } from "@/schemas";
 import {
     Form,
     FormControl,
@@ -17,39 +17,44 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { FormError } from "@/components/form-error";
 import { FormSuccess } from "@/components/form-success";
-import { loginFn } from "@/actions/login";
+import { useSearchParams } from "next/navigation";
+// import { otpVerifyFn } from "@/actions/otp";
 
 const OtpForm = () => {
+    const searchParams = useSearchParams()
+
+    const email = searchParams.get('email')
     const [error, setError] = useState<string|undefined>("");
     const [success, setSuccess] = useState<string|undefined>("");
     const [isPending, startTransition] = useTransition();
 
-    const form = useForm<z.infer<typeof LoginSchema>>({
+    const form = useForm<z.infer<typeof VerifyOTP>>({
         resolver: zodResolver(LoginSchema),
         defaultValues: {
             email: "",
-            password: ""
+            verifycode: ""
         },
     });
 
-    const onSubmit = (values: z.infer<typeof LoginSchema>) => {
+    const onSubmit = (values: z.infer<typeof VerifyOTP>) => {
+        console.log("FDFD", values)
         setError("");
         setSuccess("");
-        startTransition( async () => {
-            const res = await loginFn(values)
-            if(res.error) setError(res.error)
-                if(res.success){
-                    setSuccess(res.success)
-                    console.log(res.data);
-                }
-        });
+        // startTransition( async () => {
+        //     const res = await otpVerifyFn(values)
+        //     if(res?.error) setError(res.error)
+        //     if(res?.success){
+        //         setSuccess(res.success)
+        //         console.log(res.data);
+        //     }
+        // });
     }
         
     return (
         <CardWrapper
             headerLabel='Enter your verification code below!'
-            backButtonLabel=""
-            backButtonHref="/auth/register"
+            backButtonLabel="Back to login"
+            backButtonHref="/auth/login"
         >
             <Form {...form }>
                 <form 
@@ -67,7 +72,6 @@ const OtpForm = () => {
                                         <Input 
                                             {...field} 
                                             disabled={isPending}
-                                            readOnly
                                             placeholder="john.doe@example.com"
                                             type="email"
                                         />
@@ -78,15 +82,15 @@ const OtpForm = () => {
                         />
                         <FormField
                             control={form.control}
-                            name="password"
+                            name="verifycode"
                             render={({field}) => (
                                 <FormItem>
-                                    <FormLabel>Code</FormLabel>
+                                    <FormLabel>Verify Code</FormLabel>
                                     <FormControl>
                                         <Input
                                             {...field} 
                                             disabled={isPending}
-                                            placeholder="Please code here!"
+                                            placeholder="Please enter your code here!"
                                             type="text"
                                         />
                                     </FormControl>
@@ -98,9 +102,9 @@ const OtpForm = () => {
                     <FormError message={error}/>
                     <FormSuccess message={success}/>
                     <Button
-                        disabled={isPending}
-                         type="submit"
-                         className="w-full"
+                        // disabled={isPending}
+                        type="submit"
+                        className="w-full"
                     >
                         Next
                     </Button>

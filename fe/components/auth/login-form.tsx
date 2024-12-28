@@ -18,8 +18,10 @@ import { Button } from "@/components/ui/button";
 import { FormError } from "@/components/form-error";
 import { FormSuccess } from "@/components/form-success";
 import { loginFn } from "@/actions/login";
+import { useRouter } from "next/navigation";
 
 const LoginForm = () => {
+    const router = useRouter();
     const [error, setError] = useState<string|undefined>("");
     const [success, setSuccess] = useState<string|undefined>("");
     const [isPending, startTransition] = useTransition();
@@ -38,10 +40,11 @@ const LoginForm = () => {
         startTransition( async () => {
             const res = await loginFn(values)
             if(res.error) setError(res.error)
-                if(res.success){
-                    setSuccess(res.success)
-                    console.log(res.data);
-                }
+            if(res.success){
+                setSuccess(res.success)
+                console.log(res.data);
+                router.push(`/auth/otp?email=${values.email}`);
+            }
         });
     }
         

@@ -24,3 +24,12 @@ export const RegisterSchema = z.object({
     }),
 })
 
+
+export const VerifyOTP = z.object({
+    email: z.string().email({
+        message: "Email is required!"
+    }),
+    verifycode: z.string().min(6, {
+        message: "6 characters needed for code verification!"
+    })
+});

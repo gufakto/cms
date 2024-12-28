@@ -17,6 +17,9 @@ export const loginFn = async (values: z.infer<typeof LoginSchema>) => {
         return { error: res.statusText } 
 
     } catch(e: any) {
+        if(e.status===401 || e.status=== 400) {
+            return {error: e.response.data.message}
+        }
         return { error: e.message || "Unknown error" }
     }
 }
