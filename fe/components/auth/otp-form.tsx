@@ -3,7 +3,7 @@ import * as z from "zod";
 import { useState, useTransition } from "react";
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { RegisterSchema } from "@/schemas";
+import { LoginSchema } from "@/schemas";
 import {
     Form,
     FormControl,
@@ -17,42 +17,39 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { FormError } from "@/components/form-error";
 import { FormSuccess } from "@/components/form-success";
-import { registerFn } from "@/actions/register";
+import { loginFn } from "@/actions/login";
 
-const RegisterForm = () => {
+const OtpForm = () => {
     const [error, setError] = useState<string|undefined>("");
     const [success, setSuccess] = useState<string|undefined>("");
     const [isPending, startTransition] = useTransition();
 
-    const form = useForm<z.infer<typeof RegisterSchema>>({
-        resolver: zodResolver(RegisterSchema),
+    const form = useForm<z.infer<typeof LoginSchema>>({
+        resolver: zodResolver(LoginSchema),
         defaultValues: {
-            name: "",
             email: "",
-            phone: "",
-            password: "",
+            password: ""
         },
     });
 
-    const onSubmit = (values: z.infer<typeof RegisterSchema>) => {
+    const onSubmit = (values: z.infer<typeof LoginSchema>) => {
         setError("");
         setSuccess("");
-        startTransition(async () => {
-            const result = await registerFn(values); 
-            if (result.error) setError(result.error);
-            if (result.success) {
-                setSuccess(result.success);
-                console.log(result.data);
-            }
+        startTransition( async () => {
+            const res = await loginFn(values)
+            if(res.error) setError(res.error)
+                if(res.success){
+                    setSuccess(res.success)
+                    console.log(res.data);
+                }
         });
     }
         
     return (
         <CardWrapper
-            headerLabel='Create an account'
-            backButtonLabel="Already have an account?"
-            backButtonHref="/auth/login"
-            showSocial
+            headerLabel='Enter your verification code below!'
+            backButtonLabel=""
+            backButtonHref="/auth/register"
         >
             <Form {...form }>
                 <form 
@@ -60,24 +57,6 @@ const RegisterForm = () => {
                     className="space-y-6"
                 >
                     <div className="space-y-4">
-                        <FormField
-                            control={form.control}
-                            name="name"
-                            render={({field}) => (
-                                <FormItem>
-                                    <FormLabel>Name</FormLabel>
-                                    <FormControl>
-                                        <Input 
-                                            {...field} 
-                                            disabled={isPending}
-                                            placeholder="John Doe"
-                                            type="text"
-                                        />
-                                    </FormControl>
-                                    <FormMessage/>
-                                </FormItem>
-                            )}
-                        />
                         <FormField
                             control={form.control}
                             name="email"
@@ -88,26 +67,9 @@ const RegisterForm = () => {
                                         <Input 
                                             {...field} 
                                             disabled={isPending}
+                                            readOnly
                                             placeholder="john.doe@example.com"
                                             type="email"
-                                        />
-                                    </FormControl>
-                                    <FormMessage/>
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="phone"
-                            render={({field}) => (
-                                <FormItem>
-                                    <FormLabel>Phone</FormLabel>
-                                    <FormControl>
-                                        <Input 
-                                            {...field} 
-                                            disabled={isPending}
-                                            placeholder="+62813xxxxxxxx"
-                                            type="phone"
                                         />
                                     </FormControl>
                                     <FormMessage/>
@@ -119,13 +81,13 @@ const RegisterForm = () => {
                             name="password"
                             render={({field}) => (
                                 <FormItem>
-                                    <FormLabel>Password</FormLabel>
+                                    <FormLabel>Code</FormLabel>
                                     <FormControl>
-                                        <Input 
+                                        <Input
                                             {...field} 
                                             disabled={isPending}
-                                            placeholder="******"
-                                            type="password"
+                                            placeholder="Please code here!"
+                                            type="text"
                                         />
                                     </FormControl>
                                     <FormMessage/>
@@ -140,7 +102,7 @@ const RegisterForm = () => {
                          type="submit"
                          className="w-full"
                     >
-                        Register
+                        Next
                     </Button>
                 </form>
             </Form>
@@ -148,4 +110,4 @@ const RegisterForm = () => {
     )
 }
 
-export default RegisterForm;
+export default OtpForm;

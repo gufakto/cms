@@ -17,7 +17,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { FormError } from "@/components/form-error";
 import { FormSuccess } from "@/components/form-success";
-import { login } from "@/actions/login";
+import { loginFn } from "@/actions/login";
 
 const LoginForm = () => {
     const [error, setError] = useState<string|undefined>("");
@@ -35,12 +35,13 @@ const LoginForm = () => {
     const onSubmit = (values: z.infer<typeof LoginSchema>) => {
         setError("");
         setSuccess("");
-        startTransition(() => {
-            login(values)
-            .then((data) => {
-                setError(data.error)
-                setSuccess(data.success)
-            })
+        startTransition( async () => {
+            const res = await loginFn(values)
+            if(res.error) setError(res.error)
+                if(res.success){
+                    setSuccess(res.success)
+                    console.log(res.data);
+                }
         });
     }
         

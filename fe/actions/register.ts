@@ -4,7 +4,7 @@ import { RegisterSchema } from "@/schemas";
 import * as z from "zod";
 import axios from "axios";
 
-export const register = async (values: z.infer<typeof RegisterSchema>) => {
+export const registerFn = async (values: z.infer<typeof RegisterSchema>) => {
     const validatedFields = RegisterSchema.safeParse(values);
     if (!validatedFields.success) {
         return { error: "Invalid fields!" };
