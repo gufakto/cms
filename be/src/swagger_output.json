@@ -226,6 +226,20 @@
           }
         }
       }
+    },
+    "/api/auth/verification": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Verification token register",
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
     }
   },
   "components": {

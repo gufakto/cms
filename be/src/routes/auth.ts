@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response, Router } from 'express';
-import { loginAuth, register, verifyOTPRoutes } from '../handlers/auth';
+import { loginAuth, register, verification, verifyOTPRoutes } from '../handlers/auth';
 import { UserCreate } from '../dtos/users';
 
 const router = Router();
@@ -36,6 +36,13 @@ router.post("/register", async (req: Request<{}, {}, UserCreate>, res: Response,
            }
        } */
     await register(req, res, next);
+})
+
+router.post("/verification", async (req: Request<{token: string},{},{}>, res: Response, next: NextFunction) => {
+    /* #swagger.tags = ['Auth']
+       #swagger.summary = 'Verification token register'
+     */
+    await verification(req, res, next);
 })
 
 export default router;

@@ -7,6 +7,7 @@ import { generateToken, verifyToken } from "../utils/jwt";
 import { AppDataSource } from "../data-source";
 import { User } from "../entity/user";
 import { UserCreate } from "../dtos/users";
+import { VerificationToken } from "../entity/verification-token";
 
 
 export const loginAuth = async (req: Request<{}, {}, Auth>, res: Response, next: NextFunction) => {
@@ -75,7 +76,32 @@ export const register = async (req: Request<{}, {}, UserCreate>, res: Response, 
         req.body.password = await hashPassword(req.body.password);
         const repo = AppDataSource.getRepository(User).create(req.body);
         const results = await AppDataSource.getRepository(User).save(repo)
+        // Generate token
+        const token = generateToken({ email: req.body.email }); 
+        const verification = AppDataSource.getRepository(VerificationToken);
+        await verification.save({ identifier: req.body.email, token: token, expires: new Date(Date.now() + 1000 * 60 * 60) });
+        await sendEmail(req.body.email, 'Verification Token', `Your verification token is: http://localhost:3001/verification/${token}`);
         res.status(201).send(results)
+    } catch(e: any) {
+        next(e);
+    }
+}
+
+export const verification = async (req: Request<{token: string},{},{}>, res: Response, next: NextFunction) => {
+    try {
+        const token = req.params.token;
+        const verification = AppDataSource.getRepository(VerificationToken);
+        const data = await verification.findOneBy({token: token});
+        if(data==null) {
+            return res.status(401).send({message: 'Invalid token'});
+        }
+        if(data.expires < new Date()) {
+            return res.status(401).send({message: 'Token expired'});
+        }
+        const user = AppDataSource.getRepository(User);
+        await user.update({email: data.identifier}, {emailVerified: true}); 
+        res.status(200).send({message: 'Email verified'});
+        
     } catch(e: any) {
         next(e);
     }
