@@ -11,7 +11,7 @@ export const registerFn = async (values: z.infer<typeof RegisterSchema>) => {
     }
 
     try {
-        const apiUrl = `${process.env.NEXT_PUBLIC_API_CONTAINER}/api/users`;
+        const apiUrl = `${process.env.NEXT_PUBLIC_API_CONTAINER}/api/auth/register`;
         const response = await axios.post(apiUrl, validatedFields.data);
         if(response.status===201){
             return { success: "Thank you for your registration!", data: response.data };

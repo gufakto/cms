@@ -74,6 +74,10 @@ export const authenticate = (req: Request, res: Response, next: NextFunction) =>
 export const register = async (req: Request<{}, {}, UserCreate>, res: Response, next: NextFunction) => {
     try {
         req.body.password = await hashPassword(req.body.password);
+        const checkUserByEmail = await AppDataSource.getRepository(User).findOneBy({email: req.body.email});
+        if(checkUserByEmail!=null) {
+            return res.status(401).send({message: 'Email already registered'});
+        }
         const repo = AppDataSource.getRepository(User).create(req.body);
         const results = await AppDataSource.getRepository(User).save(repo)
         // Generate token
