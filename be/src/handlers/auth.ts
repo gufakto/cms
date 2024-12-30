@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { Auth } from "../dtos/auth";
 import { hashPassword, verifyPassword } from "../utils/utils";
-import { generateOTP, verifyOTP } from "../utils/otp";
+import { generateNumericOTP, verifyOTP } from "../utils/otp";
 import { sendEmail } from "../utils/mailer";
 import { generateToken, verifyToken } from "../utils/jwt";
 import { AppDataSource } from "../data-source";
@@ -30,7 +30,7 @@ export const loginAuth = async (req: Request<{}, {}, Auth>, res: Response, next:
         if (!check) {
             return res.status(401).send({message: 'Invalid email or password'});
         }
-        const otp = generateOTP(email);
+        const otp = generateNumericOTP(email);
         await sendEmail(email, 'Your OTP Code', `Your OTP is: ${otp}`);
         res.status(200).send({message: 'OTP sent'});
     } catch (error) {
@@ -38,16 +38,20 @@ export const loginAuth = async (req: Request<{}, {}, Auth>, res: Response, next:
     }
 }
 
+
+
 export const verifyOTPRoutes = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { email, otp } = req.body;
         const repo = AppDataSource.getRepository(User);
         const response = await repo.findOneBy({ email: email })
         if(response===null) {
-            res.status(401).send({message: 'Your account is not registered yet!'});
+            return res.status(401).send({message: 'Your account is not registered yet!'});
         }
-        if (!verifyOTP(email, otp)) {
-            res.status(401).send({message: 'Invalid or expired OTP'});
+
+        const check = verifyOTP(email, otp);
+        if (!check) {
+            return res.status(401).send({message: 'Invalid or expired OTP'});
         }
 
         const token = generateToken({ email }); 

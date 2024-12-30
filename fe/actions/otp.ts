@@ -13,7 +13,10 @@ export const otpVerifyFn = async (values: z.infer<typeof VerifyOTP>) => {
 
     try {
         const apiUrl = `${process.env.NEXT_PUBLIC_API_CONTAINER}/api/auth/verify-otp`
-        const res = await axios.post(apiUrl, validatedFields.data);
+        const res = await axios.post(apiUrl, {
+            email: validatedFields.data.email,
+            otp: validatedFields.data.verifycode
+        });
         if(res.status===200) {
             return { success: res.statusText, data: res.data }
         }

@@ -20,6 +20,7 @@ import { FormSuccess } from "@/components/form-success";
 import { useSearchParams } from "next/navigation";
 import { otpVerifyFn } from "@/actions/otp";
 import { resendVerificationFn } from "@/actions/resend-verification";
+import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from "@/components/ui/input-otp";
 
 const OtpForm = () => {
     const searchParams = useSearchParams()
@@ -103,7 +104,7 @@ const OtpForm = () => {
                                 </FormItem>
                             )}
                         />
-                        <FormField
+                        {/* <FormField
                             control={form.control}
                             name="verifycode"
                             render={({field}) => (
@@ -116,6 +117,28 @@ const OtpForm = () => {
                                             placeholder="Please enter your code here!"
                                             type="text"
                                         />
+                                    </FormControl>
+                                    <FormMessage/>
+                                </FormItem>
+                            )}
+                        /> */}
+                        <FormField
+                            control={form.control}
+                            name="verifycode"
+                            render={({field}) => (
+                                <FormItem>
+                                    <FormLabel>Verify Code</FormLabel>
+                                    <FormControl>
+                                    <InputOTP {...field} maxLength={6}>
+                                    <InputOTPGroup>
+                                        <InputOTPSlot index={0} />
+                                        <InputOTPSlot index={1} />
+                                        <InputOTPSlot index={2} />
+                                        <InputOTPSlot index={3} />
+                                        <InputOTPSlot index={4} />
+                                        <InputOTPSlot index={5} />
+                                    </InputOTPGroup>
+                                    </InputOTP>
                                     </FormControl>
                                     <FormMessage/>
                                 </FormItem>
