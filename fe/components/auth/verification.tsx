@@ -1,5 +1,5 @@
 "use client";
-import React from 'react'
+import React, { FC } from 'react'
 import { FormError } from '@/components/form-error';
 import { FormSuccess } from '@/components/form-success';
 import CardWrapper from './card-wrapper';
@@ -9,7 +9,7 @@ interface VerificationProps {
     error?: undefined;
 }
 
-export const Verification = ({success, error}: VerificationProps) => {
+export const Verification: FC<VerificationProps> = ({success, error}) => {
     
     return (
         <CardWrapper

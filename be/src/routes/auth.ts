@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response, Router } from 'express';
-import { loginAuth, register, verification, verifyOTPRoutes } from '../handlers/auth';
+import { loginAuth, register, resendVerification, verification, verifyOTPRoutes } from '../handlers/auth';
 import { UserCreate } from '../dtos/users';
 
 const router = Router();
@@ -43,6 +43,13 @@ router.get("/verification/:token", async (req: Request<{token: string},{},{}>, r
        #swagger.summary = 'Verification token register'
      */
     await verification(req, res, next);
+})
+
+router.get("/re-send-verification/:email", async (req: Request<{email: string},{},{}>, res: Response, next: NextFunction) => {
+    /* #swagger.tags = ['Auth']
+       #swagger.summary = 'Re-send Verification token'
+     */
+    await resendVerification(req, res, next);
 })
 
 export default router;

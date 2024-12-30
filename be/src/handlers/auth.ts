@@ -19,14 +19,9 @@ export const loginAuth = async (req: Request<{}, {}, Auth>, res: Response, next:
         }
 
         const repo = AppDataSource.getRepository(User);
-        var emailIdentifier = true;
         let data = await repo.findOneBy({ email: email })
         if (!data) {
-            data = await repo.findOneBy({ phone: email });
-            emailIdentifier = false;
-            if(!data) {
-                return res.status(401).send({message: 'Invalid identifier or password'});
-            }
+            return res.status(401).send({message: 'Invalid identifier or password'});
         }
         if(!data.emailVerified) {
             return res.status(401).send({message: 'Email not verified'});
@@ -35,10 +30,8 @@ export const loginAuth = async (req: Request<{}, {}, Auth>, res: Response, next:
         if (!check) {
             return res.status(401).send({message: 'Invalid email or password'});
         }
-        if(emailIdentifier) {
-            const otp = generateOTP(email);
-            await sendEmail(email, 'Your OTP Code', `Your OTP is: ${otp}`);
-        }
+        const otp = generateOTP(email);
+        await sendEmail(email, 'Your OTP Code', `Your OTP is: ${otp}`);
         res.status(200).send({message: 'OTP sent'});
     } catch (error) {
         next(error); // Proper error handling
@@ -92,8 +85,29 @@ export const register = async (req: Request<{}, {}, UserCreate>, res: Response, 
         const token = generateToken({ email: req.body.email }); 
         const verification = AppDataSource.getRepository(VerificationToken);
         await verification.save({ identifier: req.body.email, token: token, expires: new Date(Date.now() + 1000 * 60 * 60) });
-        await sendEmail(req.body.email, 'Verification Token', `Your verification token is: http://localhost:3001/verification/${token}`);
+        await sendEmail(req.body.email, 'Verification Token', `Your verification token link is: ${process.env.VERIFICATION_URL}/${token}`);
         res.status(201).send(results)
+    } catch(e: any) {
+        next(e);
+    }
+}
+
+export const resendVerification = async (req: Request<{email: string}, {}, {}>, res: Response, next: NextFunction) => {
+    try {
+        const email = req.params.email;
+        const user = AppDataSource.getRepository(User);
+        const data = await user.findOneBy({email: email});
+        if(data==null) {
+            return res.status(401).send({message: 'Email not registered'});
+        }
+        if(data.emailVerified) {
+            return res.status(401).send({message: 'Email already verified'});
+        }
+        const verification = AppDataSource.getRepository(VerificationToken);
+        const token = generateToken({ email: email }); 
+        await verification.save({ identifier: email, token: token, expires: new Date(Date.now() + 1000 * 60 * 60) });
+        await sendEmail(email, 'Verification Token', `Your verification token link is: ${process.env.VERIFICATION_URL}/${token}`);
+        res.status(200).send({message: 'Verification token sent'});
     } catch(e: any) {
         next(e);
     }
@@ -112,7 +126,7 @@ export const verification = async (req: Request<{token: string},{},{}>, res: Res
         }
         const user = AppDataSource.getRepository(User);
         await user.update({email: data.identifier}, {emailVerified: new Date()}); 
-
+        AppDataSource.getRepository(VerificationToken).delete({token: token});
         res.status(200).send({message: 'Email verified'});
         
     } catch(e: any) {

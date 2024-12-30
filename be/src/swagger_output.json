@@ -250,6 +250,30 @@
           }
         }
       }
+    },
+    "/api/auth/re-send-verification/{email}": {
+      "get": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Re-send Verification token",
+        "description": "",
+        "parameters": [
+          {
+            "name": "email",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
     }
   },
   "components": {
