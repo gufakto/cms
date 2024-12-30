@@ -33,3 +33,9 @@ export const VerifyOTP = z.object({
         message: "6 characters needed for code verification!"
     })
 });
+
+export const ResendtVerification = z.object({
+    email: z.string().email({
+        message: "Email is required!"
+    })
+})

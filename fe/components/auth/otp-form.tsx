@@ -19,6 +19,7 @@ import { FormError } from "@/components/form-error";
 import { FormSuccess } from "@/components/form-success";
 import { useSearchParams } from "next/navigation";
 import { otpVerifyFn } from "@/actions/otp";
+import { resendVerificationFn } from "@/actions/resend-verification";
 
 const OtpForm = () => {
     const searchParams = useSearchParams()
@@ -35,7 +36,7 @@ const OtpForm = () => {
             verifycode: ""
         },
     });
-
+    
     const onSubmit = (values: z.infer<typeof VerifyOTP>) => {
         setError("");
         setSuccess("");
@@ -48,12 +49,35 @@ const OtpForm = () => {
             }
         });
     }
+
+    const reSendClicked = () => {
+        setError("");
+        setSuccess("");
+        startTransition( async () => {
+            const data = await resendVerificationFn(form.getValues('email'))
+            if(data?.error) setError(data.error)
+            if(data?.success){
+                setSuccess(data.success)
+                console.log(data.data);
+            }
+        });
+        
+    }
         
     return (
         <CardWrapper
             headerLabel='Enter your verification code below!'
             backButtonLabel="Back to login"
             backButtonHref="/auth/login"
+            isResend={<Button
+                variant="link"
+                className="font-normal" 
+                type="button"
+                size={"sm"}
+                onClick={reSendClicked}
+            >
+                Re-send
+            </Button>}
         >
             <Form {...form }>
                 <form 

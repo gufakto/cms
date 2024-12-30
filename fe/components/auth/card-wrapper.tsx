@@ -6,9 +6,10 @@ interface CardWrapperProps {
     backButtonLabel: string;
     backButtonHref: string;
     showSocial?: boolean;
+    isResend?: React.ReactNode;
 }
 
-import React from 'react'
+import React, { FC } from 'react'
 import { 
     Card,
     CardContent,
@@ -19,13 +20,14 @@ import {
 import { Social } from '@/components/auth/social';
 import { BackButton } from '@/components/auth/back-button';
 
-const CardWrapper = ({
+const CardWrapper: FC<CardWrapperProps> = ({
     children,
     headerLabel,
     backButtonLabel,
     backButtonHref,
-    showSocial
-}: CardWrapperProps) => {
+    showSocial,
+    isResend
+}) => {
   return (
     <Card className="w-[400px] shadow-md">
         <CardHeader>
@@ -39,11 +41,13 @@ const CardWrapper = ({
                 <Social/>
             </CardFooter>
         )}
-        <CardFooter>
+        <CardFooter className='flex justify-between'>
             <BackButton
                 label={backButtonLabel}
                 href={backButtonHref}
             />
+            {isResend}
+            
         </CardFooter>
     </Card>
   )

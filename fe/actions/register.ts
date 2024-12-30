@@ -23,3 +23,4 @@ export const registerFn = async (values: z.infer<typeof RegisterSchema>) => {
         return { error: err.message || "Unknown error" };
     }
 };
+
