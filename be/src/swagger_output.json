@@ -227,13 +227,23 @@
         }
       }
     },
-    "/api/auth/verification": {
-      "post": {
+    "/api/auth/verification/{token}": {
+      "get": {
         "tags": [
           "Auth"
         ],
         "summary": "Verification token register",
         "description": "",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "default": {
             "description": ""

@@ -66,13 +66,13 @@ const LoginForm = () => {
                             name="email"
                             render={({field}) => (
                                 <FormItem>
-                                    <FormLabel>Email</FormLabel>
+                                    <FormLabel>Email / Phone Number</FormLabel>
                                     <FormControl>
                                         <Input 
                                             {...field} 
                                             disabled={isPending}
-                                            placeholder="john.doe@example.com"
-                                            type="email"
+                                            placeholder="Enter your email or phone number here!"
+                                            type="text"
                                         />
                                     </FormControl>
                                     <FormMessage/>

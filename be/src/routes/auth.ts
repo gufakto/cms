@@ -38,7 +38,7 @@ router.post("/register", async (req: Request<{}, {}, UserCreate>, res: Response,
     await register(req, res, next);
 })
 
-router.post("/verification", async (req: Request<{token: string},{},{}>, res: Response, next: NextFunction) => {
+router.get("/verification/:token", async (req: Request<{token: string},{},{}>, res: Response, next: NextFunction) => {
     /* #swagger.tags = ['Auth']
        #swagger.summary = 'Verification token register'
      */

@@ -19,18 +19,26 @@ export const loginAuth = async (req: Request<{}, {}, Auth>, res: Response, next:
         }
 
         const repo = AppDataSource.getRepository(User);
-        const data = await repo.findOneBy({ email: email })
+        var emailIdentifier = true;
+        let data = await repo.findOneBy({ email: email })
         if (!data) {
-            return res.status(401).send({message: 'Invalid email or password'});
+            data = await repo.findOneBy({ phone: email });
+            emailIdentifier = false;
+            if(!data) {
+                return res.status(401).send({message: 'Invalid identifier or password'});
+            }
         }
-
+        if(!data.emailVerified) {
+            return res.status(401).send({message: 'Email not verified'});
+        }
         const check = await verifyPassword(password, data!.password);
         if (!check) {
             return res.status(401).send({message: 'Invalid email or password'});
         }
-
-        const otp = generateOTP(email);
-        await sendEmail(email, 'Your OTP Code', `Your OTP is: ${otp}`);
+        if(emailIdentifier) {
+            const otp = generateOTP(email);
+            await sendEmail(email, 'Your OTP Code', `Your OTP is: ${otp}`);
+        }
         res.status(200).send({message: 'OTP sent'});
     } catch (error) {
         next(error); // Proper error handling
@@ -103,7 +111,8 @@ export const verification = async (req: Request<{token: string},{},{}>, res: Res
             return res.status(401).send({message: 'Token expired'});
         }
         const user = AppDataSource.getRepository(User);
-        await user.update({email: data.identifier}, {emailVerified: true}); 
+        await user.update({email: data.identifier}, {emailVerified: new Date()}); 
+
         res.status(200).send({message: 'Email verified'});
         
     } catch(e: any) {
