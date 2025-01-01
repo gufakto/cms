@@ -17,7 +17,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { FormError } from "@/components/form-error";
 import { FormSuccess } from "@/components/form-success";
-import { loginFn } from "@/actions/login";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 
@@ -39,13 +38,6 @@ const LoginForm = () => {
         setError("");
         setSuccess("");
         startTransition( async () => {
-            // const res = await loginFn(values)
-            // if(res.error) setError(res.error)
-            // if(res.success){
-            //     setSuccess(res.success)
-            //     console.log(res.data);
-            //     router.push(`/auth/otp?email=${values.email}`);
-            // }
             const result = await signIn("credentials", {
                 email: values.email,
                 password: values.password,
@@ -55,7 +47,7 @@ const LoginForm = () => {
               if (result?.ok) {
                 router.push("/auth/otp"); // Redirect to dashboard after successful login
               } else {
-                alert("Invalid OTP");
+                setError(result?.error || "An error occurred");
               }
         });
     }

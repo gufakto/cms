@@ -18,11 +18,13 @@ import { Button } from "@/components/ui/button";
 import { FormError } from "@/components/form-error";
 import { FormSuccess } from "@/components/form-success";
 import { useSearchParams } from "next/navigation";
-import { otpVerifyFn } from "@/actions/otp";
 import { resendVerificationFn } from "@/actions/resend-verification";
-import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from "@/components/ui/input-otp";
+import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 const OtpForm = () => {
+    const router = useRouter();
     const searchParams = useSearchParams()
 
     const email = searchParams.get('email')
@@ -42,11 +44,23 @@ const OtpForm = () => {
         setError("");
         setSuccess("");
         startTransition( async () => {
-            const res = await otpVerifyFn(values)
-            if(res?.error) setError(res.error)
-            if(res?.success){
-                setSuccess(res.success)
-                console.log(res.data);
+            // const res = await otpVerifyFn(values)
+            // if(res?.error) setError(res.error)
+            // if(res?.success){
+            //     setSuccess(res.success)
+            //     console.log(res.data);
+            // }
+            const result = await signIn("credentials", {
+                email: values.email,
+                otp: values.verifycode,
+                redirect: false,
+            });
+        
+            if (result?.ok) {
+                console.log("asd",result);
+                router.push("/auth/otp"); // Redirect to dashboard after successful login
+            } else {
+                setError(result?.error || "An error occurred");
             }
         });
     }
