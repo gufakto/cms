@@ -19,6 +19,7 @@ import { FormError } from "@/components/form-error";
 import { FormSuccess } from "@/components/form-success";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
+import { Loading } from "../loading";
 
 const LoginForm = () => {
     const router = useRouter();
@@ -59,6 +60,7 @@ const LoginForm = () => {
             backButtonHref="/auth/register"
             showSocial
         >
+            <Loading showed={isPending}/>
             <Form {...form }>
                 <form 
                     onSubmit={form.handleSubmit(onSubmit)}

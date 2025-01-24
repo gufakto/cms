@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { FormError } from "@/components/form-error";
 import { FormSuccess } from "@/components/form-success";
 import { registerFn } from "@/actions/register";
+import { Loading } from "../loading";
 
 const RegisterForm = () => {
     const [error, setError] = useState<string|undefined>("");
@@ -54,6 +55,7 @@ const RegisterForm = () => {
             backButtonHref="/auth/login"
             showSocial
         >
+            <Loading showed={isPending}/>
             <Form {...form }>
                 <form 
                     onSubmit={form.handleSubmit(onSubmit)}

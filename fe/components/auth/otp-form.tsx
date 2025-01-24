@@ -22,6 +22,7 @@ import { resendVerificationFn } from "@/actions/resend-verification";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { Loading } from "../loading";
 
 const OtpForm = () => {
     const router = useRouter();
@@ -44,12 +45,6 @@ const OtpForm = () => {
         setError("");
         setSuccess("");
         startTransition( async () => {
-            // const res = await otpVerifyFn(values)
-            // if(res?.error) setError(res.error)
-            // if(res?.success){
-            //     setSuccess(res.success)
-            //     console.log(res.data);
-            // }
             const result = await signIn("credentials", {
                 email: values.email,
                 otp: values.verifycode,
@@ -58,7 +53,7 @@ const OtpForm = () => {
         
             if (result?.ok) {
                 console.log("asd",result);
-                router.push("/auth/otp"); // Redirect to dashboard after successful login
+                router.push("/admin/home"); // Redirect to dashboard after successful login
             } else {
                 setError(result?.error || "An error occurred");
             }
@@ -94,6 +89,7 @@ const OtpForm = () => {
                 Re-send
             </Button>}
         >
+            <Loading showed={isPending}/>
             <Form {...form }>
                 <form 
                     onSubmit={form.handleSubmit(onSubmit)}

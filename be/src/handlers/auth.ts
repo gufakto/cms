@@ -11,54 +11,54 @@ import { VerificationToken } from "../entity/verification-token";
 
 
 export const loginAuth = async (req: Request<{}, {}, Auth>, res: Response, next: NextFunction) => {
-    try {
-        const { email, password } = req.body;
+    // try {
+    //     const { email, password } = req.body;
 
-        if (!email || !password) {
-            return res.status(400).send({message: 'Email and password are required'});
-        }
+    //     if (!email || !password) {
+    //         return res.status(400).send({message: 'Email and password are required'});
+    //     }
 
-        const repo = AppDataSource.getRepository(User);
-        let data = await repo.findOneBy({ email: email })
-        if (!data) {
-            return res.status(401).send({message: 'Invalid identifier or password'});
-        }
-        if(!data.emailVerified) {
-            return res.status(401).send({message: 'Email not verified'});
-        }
-        const check = await verifyPassword(password, data!.password);
-        if (!check) {
-            return res.status(401).send({message: 'Invalid email or password'});
-        }
-        const otp = generateNumericOTP(email);
-        await sendEmail(email, 'Your OTP Code', `Your OTP is: ${otp}`);
-        res.status(200).send({message: 'OTP sent'});
-    } catch (error) {
-        next(error); // Proper error handling
-    }
+    //     const repo = AppDataSource.getRepository(User);
+    //     let data = await repo.findOneBy({ email: email })
+    //     if (!data) {
+    //         return res.status(401).send({message: 'Invalid identifier or password'});
+    //     }
+    //     if(!data.emailVerified) {
+    //         return res.status(401).send({message: 'Email not verified'});
+    //     }
+    //     const check = await verifyPassword(password, data!.password);
+    //     if (!check) {
+    //         return res.status(401).send({message: 'Invalid email or password'});
+    //     }
+    //     const otp = generateNumericOTP(email);
+    //     await sendEmail(email, 'Your OTP Code', `Your OTP is: ${otp}`);
+    //     res.status(200).send({message: 'OTP sent'});
+    // } catch (error) {
+    //     next(error); // Proper error handling
+    // }
 }
 
 
 
 export const verifyOTPRoutes = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const { email, otp } = req.body;
-        const repo = AppDataSource.getRepository(User);
-        const response = await repo.findOneBy({ email: email })
-        if(response===null) {
-            return res.status(401).send({message: 'Your account is not registered yet!'});
-        }
+    // try {
+    //     const { email, otp } = req.body;
+    //     const repo = AppDataSource.getRepository(User);
+    //     const response = await repo.findOneBy({ email: email })
+    //     if(response===null) {
+    //         return res.status(401).send({message: 'Your account is not registered yet!'});
+    //     }
 
-        const check = verifyOTP(email, otp);
-        if (!check) {
-            return res.status(401).send({message: 'Invalid or expired OTP'});
-        }
+    //     const check = verifyOTP(email, otp);
+    //     if (!check) {
+    //         return res.status(401).send({message: 'Invalid or expired OTP'});
+    //     }
 
-        const token = generateToken({ email }); 
-        res.status(200).send({ token });
-    } catch(e: any) {
-        next(e);
-    }
+    //     const token = generateToken({ email }); 
+    //     res.status(200).send({ token });
+    // } catch(e: any) {
+    //     next(e);
+    // }
 } 
 
 export const authenticate = (req: Request, res: Response, next: NextFunction) => {
@@ -77,63 +77,63 @@ export const authenticate = (req: Request, res: Response, next: NextFunction) =>
 };
 
 export const register = async (req: Request<{}, {}, UserCreate>, res: Response, next: NextFunction) => {
-    try {
-        req.body.password = await hashPassword(req.body.password);
-        const checkUserByEmail = await AppDataSource.getRepository(User).findOneBy({email: req.body.email});
-        if(checkUserByEmail!=null) {
-            return res.status(401).send({message: 'Email already registered'});
-        }
-        const repo = AppDataSource.getRepository(User).create(req.body);
-        const results = await AppDataSource.getRepository(User).save(repo)
-        // Generate token
-        const token = generateToken({ email: req.body.email }); 
-        const verification = AppDataSource.getRepository(VerificationToken);
-        await verification.save({ identifier: req.body.email, token: token, expires: new Date(Date.now() + 1000 * 60 * 60) });
-        await sendEmail(req.body.email, 'Verification Token', `Your verification token link is: ${process.env.VERIFICATION_URL}/${token}`);
-        res.status(201).send(results)
-    } catch(e: any) {
-        next(e);
-    }
+    // try {
+    //     req.body.password = await hashPassword(req.body.password);
+    //     const checkUserByEmail = await AppDataSource.getRepository(User).findOneBy({email: req.body.email});
+    //     if(checkUserByEmail!=null) {
+    //         return res.status(401).send({message: 'Email already registered'});
+    //     }
+    //     const repo = AppDataSource.getRepository(User).create(req.body);
+    //     const results = await AppDataSource.getRepository(User).save(repo)
+    //     // Generate token
+    //     const token = generateToken({ email: req.body.email }); 
+    //     const verification = AppDataSource.getRepository(VerificationToken);
+    //     await verification.save({ identifier: req.body.email, token: token, expires: new Date(Date.now() + 1000 * 60 * 60) });
+    //     await sendEmail(req.body.email, 'Verification Token', `Your verification token link is: ${process.env.VERIFICATION_URL}/${token}`);
+    //     res.status(201).send(results)
+    // } catch(e: any) {
+    //     next(e);
+    // }
 }
 
 export const resendVerification = async (req: Request<{email: string}, {}, {}>, res: Response, next: NextFunction) => {
-    try {
-        const email = req.params.email;
-        const user = AppDataSource.getRepository(User);
-        const data = await user.findOneBy({email: email});
-        if(data==null) {
-            return res.status(401).send({message: 'Email not registered'});
-        }
-        if(data.emailVerified) {
-            return res.status(401).send({message: 'Email already verified'});
-        }
-        const verification = AppDataSource.getRepository(VerificationToken);
-        const token = generateToken({ email: email }); 
-        await verification.save({ identifier: email, token: token, expires: new Date(Date.now() + 1000 * 60 * 60) });
-        await sendEmail(email, 'Verification Token', `Your verification token link is: ${process.env.VERIFICATION_URL}/${token}`);
-        res.status(200).send({message: 'Verification token sent'});
-    } catch(e: any) {
-        next(e);
-    }
+    // try {
+    //     const email = req.params.email;
+    //     const user = AppDataSource.getRepository(User);
+    //     const data = await user.findOneBy({email: email});
+    //     if(data==null) {
+    //         return res.status(401).send({message: 'Email not registered'});
+    //     }
+    //     if(data.emailVerified) {
+    //         return res.status(401).send({message: 'Email already verified'});
+    //     }
+    //     const verification = AppDataSource.getRepository(VerificationToken);
+    //     const token = generateToken({ email: email }); 
+    //     await verification.save({ identifier: email, token: token, expires: new Date(Date.now() + 1000 * 60 * 60) });
+    //     await sendEmail(email, 'Verification Token', `Your verification token link is: ${process.env.VERIFICATION_URL}/${token}`);
+    //     res.status(200).send({message: 'Verification token sent'});
+    // } catch(e: any) {
+    //     next(e);
+    // }
 }
 
 export const verification = async (req: Request<{token: string},{},{}>, res: Response, next: NextFunction) => {
-    try {
-        const token = req.params.token;
-        const verification = AppDataSource.getRepository(VerificationToken);
-        const data = await verification.findOneBy({token: token});
-        if(data==null) {
-            return res.status(401).send({message: 'Invalid token'});
-        }
-        if(data.expires < new Date()) {
-            return res.status(401).send({message: 'Token expired'});
-        }
-        const user = AppDataSource.getRepository(User);
-        await user.update({email: data.identifier}, {emailVerified: new Date()}); 
-        AppDataSource.getRepository(VerificationToken).delete({token: token});
-        res.status(200).send({message: 'Email verified'});
+    // try {
+    //     const token = req.params.token;
+    //     const verification = AppDataSource.getRepository(VerificationToken);
+    //     const data = await verification.findOneBy({token: token});
+    //     if(data==null) {
+    //         return res.status(401).send({message: 'Invalid token'});
+    //     }
+    //     if(data.expires < new Date()) {
+    //         return res.status(401).send({message: 'Token expired'});
+    //     }
+    //     const user = AppDataSource.getRepository(User);
+    //     await user.update({email: data.identifier}, {emailVerified: new Date()}); 
+    //     AppDataSource.getRepository(VerificationToken).delete({token: token});
+    //     res.status(200).send({message: 'Email verified'});
         
-    } catch(e: any) {
-        next(e);
-    }
+    // } catch(e: any) {
+    //     next(e);
+    // }
 }
