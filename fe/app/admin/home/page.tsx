@@ -16,7 +16,7 @@ const HomePage = async () => {
     }
     console.log(session);
   return (
-    <div>HomePage</div>
+    <div>Welcome to admin dashboard {session?.user?.name}</div>
   )
 }
 

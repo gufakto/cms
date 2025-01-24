@@ -36,21 +36,17 @@ router.post('/login', async (req: Request<{}, {}, Auth>, res: Response, next: Ne
             let data = await repo.findOneBy({ email: email })
             console.log("ASAS",data);
             if (!data) {
-                console.log("TEST 2");
                 res.status(401).json({message: 'Invalid identifier or password'});
             }
             if(!data?.emailVerified) {
-                console.log("TEST 3");
                 res.status(401).send({message: 'Email not verified'});
             }
             const check = await verifyPassword(password, data!.password);
             if (!check) {
-                console.log("TEST 4");
                 res.status(401).send({message: 'Invalid email or password'});
             }
             const otp = generateNumericOTP(email);
             await sendEmail(email, 'Your OTP Code', `Your OTP is: ${otp}`);
-            console.log("TEST 5");
             res.status(200).send({message: 'OTP sent'});
         } catch (error) {
             next(error); // Proper error handling
@@ -74,7 +70,15 @@ router.post('/verify-otp', async (req: Request, res: Response, next: NextFunctio
         }
 
         const token = generateToken({ email }); 
-        res.status(200).send({ token });
+        res.status(200).send({ 
+            token,
+            user: {
+                name: response?.name,
+                email: response?.email,
+                image: response?.image,
+                phone: response?.phone 
+            }
+         });
     } catch(e: any) {
         next(e);
     }

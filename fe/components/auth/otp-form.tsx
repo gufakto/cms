@@ -52,7 +52,6 @@ const OtpForm = () => {
             });
         
             if (result?.ok) {
-                console.log("asd",result);
                 router.push("/admin/home"); // Redirect to dashboard after successful login
             } else {
                 setError(result?.error || "An error occurred");

@@ -1,14 +1,19 @@
 import axios from "axios";
 import NextAuth from "next-auth"
 import CredentialsProvider from 'next-auth/providers/credentials';
-import GitHub from 'next-auth/providers/github'
+import GitHubProvider from 'next-auth/providers/github'
+import GoogleProvider from 'next-auth/providers/google';
 
 const authOptions = {
     debug: true, // Enable debug messages in the console if you are having problems
     providers: [
-        GitHub({
+        GitHubProvider({
             clientId: process.env.GITHUB_CLIENT_ID || '',
             clientSecret: process.env.GITHUB_CLIENT_SECRET || '',
+        }),
+        GoogleProvider({
+            clientId: process.env.GOOGLE_CLIENT_ID || '',
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET || ''
         }),
         CredentialsProvider({
             name: 'Credentials',
@@ -33,9 +38,9 @@ const authOptions = {
                 try {
                     
                     const response = await axios.post(`${process.env.NEXT_PUBLIC_API_CONTAINER}/api/auth/login`, { email, password });
+                    
                     return response.data; // Assuming the API sends user data on successful OTP initiation
                 } catch (error: any) {
-                    console.log("DONAL", error);
                     throw new Error(error.response?.data?.message || 'Login failed');
                 }
             },
