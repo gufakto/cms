@@ -60,12 +60,12 @@ const Menu = () => {
         {menuItems.map((i)=> (
             <div className='' key={i.title}>
                 <span className=''>{i.title}</span>
-                {i.items.map((item) => (
-                    <Link href={item.href} key={item.label}>
+                {i.items.map((item) => 
+                    <Link href={item.href} key={item.label} className='border-2 bg-gray-600'>
                         {item.icon}
                         <span>{item.label}</span>
                     </Link>
-                ))}
+                )}
             </div>
         ))}
     </div>
