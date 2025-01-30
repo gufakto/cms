@@ -1,6 +1,14 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import React from 'react'
+import React from 'react';
+import { 
+    AiFillHome, 
+    AiFillEdit, 
+    AiOutlineUsergroupDelete,
+    AiOutlineUsergroupAdd,
+    AiFillTool,
+    AiOutlineLogout
+} from "react-icons/ai";
 
 
 const menuItems = [
@@ -8,12 +16,12 @@ const menuItems = [
         title: "MENU",
         items: [
             {
-                icon: "Home",
+                icon: <AiFillHome />,
                 label: "Home",
                 href: "/admin/home"
             },
             {
-                icon: "Petamin",
+                icon: <AiOutlineUsergroupDelete />,
                 label: "Petani",
                 href: "/"
             }
@@ -23,12 +31,22 @@ const menuItems = [
         title: "Others",
         items: [
             {
-                icon: "profile",
+                icon: <AiFillEdit />,
                 label: "Profile",
                 href: "/"
             },
             {
-                icon: "logout",
+                icon: <AiOutlineUsergroupAdd />,
+                label: "Users",
+                href: "/"
+            },
+            {
+                icon: <AiFillTool/>,
+                label: "Setting",
+                href: "/"
+            },
+            {
+                icon: <AiOutlineLogout/>,
                 label: "Logout",
                 href: "/"
             }
@@ -44,7 +62,7 @@ const Menu = () => {
                 <span className=''>{i.title}</span>
                 {i.items.map((item) => (
                     <Link href={item.href} key={item.label}>
-                        <Image src={item.icon} alt={item.label} width={20} height={20} />
+                        {item.icon}
                         <span>{item.label}</span>
                     </Link>
                 ))}
