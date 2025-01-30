@@ -2,6 +2,9 @@ import type { NextConfig } from "next";
 import { config } from "process";
 
 const nextConfig: NextConfig = {
+  images: {
+    domains: ['www.google.com'], // Add the domain hosting the external image
+  },
   publicRuntimeConfig: {
     apiUrl: process.env.BACKEND_API || "http://localhost:3000",
   },

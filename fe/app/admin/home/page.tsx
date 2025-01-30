@@ -1,4 +1,4 @@
-import { getServerSession, Session } from 'next-auth';
+import { getServerSession } from 'next-auth';
 import React from 'react'
 import { authOptions } from '@/lib/auth';
 

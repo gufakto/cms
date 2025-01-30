@@ -12,7 +12,7 @@ export const Social = () => {
             <form
             className="w-full" 
             action={async () => {
-                await signIn("google")
+                await signIn("google", { callbackUrl: "/admin/home" })
             }}
             >
             <Button size={"lg"} className="w-full" variant={"outline"}
@@ -24,7 +24,7 @@ export const Social = () => {
             <form
             className="w-full" 
             action={async () => {
-                await signIn("github")
+                await signIn("github", { callbackUrl: "/admin/home" })
             }}
             >
             <Button size={"lg"} className="w-full" variant={"outline"}
