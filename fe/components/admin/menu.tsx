@@ -9,6 +9,7 @@ import {
     AiFillTool,
     AiOutlineLogout
 } from "react-icons/ai";
+import { GiFarmer } from "react-icons/gi";
 
 
 const menuItems = [
@@ -21,7 +22,7 @@ const menuItems = [
                 href: "/admin/home"
             },
             {
-                icon: <AiOutlineUsergroupDelete />,
+                icon: <GiFarmer />,
                 label: "Petani",
                 href: "/"
             }
@@ -58,11 +59,11 @@ const Menu = () => {
   return (
     <div>
         {menuItems.map((i)=> (
-            <div className='' key={i.title}>
+            <div className='bg-green-300' key={i.title}>
                 <span className=''>{i.title}</span>
                 {i.items.map((item) => 
-                    <Link href={item.href} key={item.label} className='border-2 bg-gray-600'>
-                        {item.icon}
+                    <Link href={item.href} key={item.label} className='flex items-center justify-start'>
+                        <div className='pr-1'>{item.icon}</div>
                         <span>{item.label}</span>
                     </Link>
                 )}
