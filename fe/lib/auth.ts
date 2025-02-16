@@ -27,7 +27,7 @@ const authOptions = {
                 if (otp) {
                     // OTP verification via Golang API
                     try {
-                        const response = await axios.post(`${process.env.NEXT_PUBLIC_API_CONTAINER}/api/auth/verify-otp`, { email, otp });
+                        const response = await axios.post(`${process.env.NEXT_PUBLIC_API_CONTAINER}/v1/auth/verify-otp`, { email, otp });
                         return response.data; // Assuming the API returns user data on success
                     } catch (error) {
                         throw new Error('Invalid OTP');
@@ -37,7 +37,7 @@ const authOptions = {
                 // Password-based login via Golang API
                 try {
                     
-                    const response = await axios.post(`${process.env.NEXT_PUBLIC_API_CONTAINER}/api/auth/login`, { email, password });
+                    const response = await axios.post(`${process.env.NEXT_PUBLIC_API_CONTAINER}/v1/auth/login`, { email, password });
                     
                     return response.data; // Assuming the API sends user data on successful OTP initiation
                 } catch (error: any) {

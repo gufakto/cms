@@ -46,7 +46,7 @@ const LoginForm = () => {
               });
           
               if (result?.ok) {
-                router.push("/auth/otp"); // Redirect to dashboard after successful login
+                router.push("/admin/home"); // Redirect to dashboard after successful login
               } else {
                 setError(result?.error || "An error occurred");
               }

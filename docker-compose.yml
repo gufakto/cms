@@ -3,10 +3,10 @@ services:
   cms-be:
     build: 
       dockerfile: Dockerfile 
-      context: ./be
+      context: ./cms-be
     container_name: cms-be
     volumes:
-      - ./be:/app
+      - ./cms-be:/app:delegated
     ports:
       - "3000:3000"
     restart: always
@@ -14,7 +14,7 @@ services:
       - 8.8.8.8   # Google DNS
       - 1.1.1.1   # Cloudflare DNS
     env_file:
-      - ./be/.env
+      - ./cms-be/.env
   
   cms-fe:
     build: 
