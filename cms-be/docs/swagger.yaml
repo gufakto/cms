@@ -7,6 +7,15 @@ definitions:
       password:
         type: string
     type: object
+  dto.AuthRes:
+    properties:
+      refresh_token:
+        type: string
+      token:
+        type: string
+      user:
+        $ref: '#/definitions/dto.UserData'
+    type: object
   dto.RefreshTokenReq:
     properties:
       refresh_token:
@@ -16,10 +25,50 @@ definitions:
     properties:
       message:
         type: string
+      status:
+        type: integer
     type: object
-  dto.ResponseData:
+  dto.ResponseData-dto_AuthRes:
     properties:
-      data: {}
+      data:
+        $ref: '#/definitions/dto.AuthRes'
+      status:
+        type: integer
+    type: object
+  dto.ResponseData-dto_UserData:
+    properties:
+      data:
+        $ref: '#/definitions/dto.UserData'
+      status:
+        type: integer
+    type: object
+  dto.ResponsePaginate-array_dto_UserData:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/dto.UserData'
+        type: array
+      limit:
+        type: integer
+      page:
+        type: integer
+      status:
+        type: integer
+      total:
+        type: integer
+    type: object
+  dto.UserData:
+    properties:
+      created_at:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      updated_at:
+        type: string
     type: object
   dto.UserReq:
     properties:
@@ -61,6 +110,10 @@ paths:
         "200":
           description: OK
           schema:
+            $ref: '#/definitions/dto.ResponsePaginate-array_dto_UserData'
+        "401":
+          description: Unauthorized
+          schema:
             $ref: '#/definitions/dto.Response'
         "500":
           description: Internal Server Error
@@ -88,7 +141,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/dto.ResponseData'
+            $ref: '#/definitions/dto.ResponseData-dto_UserData'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.Response'
         "500":
           description: Internal Server Error
           schema:
@@ -112,8 +173,16 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "204":
+          description: No Content
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "401":
+          description: Unauthorized
           schema:
             $ref: '#/definitions/dto.Response'
         "500":
@@ -123,6 +192,34 @@ paths:
       security:
       - BearerAuth: []
       summary: User Delete
+      tags:
+      - User
+    get:
+      consumes:
+      - application/json
+      description: User Detail
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ResponseData-dto_UserData'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.Response'
+      security:
+      - BearerAuth: []
+      summary: User Detail
       tags:
       - User
     put:
@@ -146,6 +243,14 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            $ref: '#/definitions/dto.ResponseData-dto_UserData'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "401":
+          description: Unauthorized
           schema:
             $ref: '#/definitions/dto.Response'
         "500":
@@ -175,7 +280,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/dto.ResponseData'
+            $ref: '#/definitions/dto.ResponseData-dto_AuthRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/dto.Response'
         "500":
           description: Internal Server Error
           schema:
@@ -201,7 +314,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/dto.ResponseData'
+            $ref: '#/definitions/dto.ResponseData-dto_AuthRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/dto.Response'
         "500":
           description: Internal Server Error
           schema:

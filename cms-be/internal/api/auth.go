@@ -23,19 +23,23 @@ func NewAuth(authService service.AuthService) *authApi {
 // @Accept json
 // @Produce json
 // @Param project body dto.AuthReq true "Login Info"
-// @Success 200 {object} dto.ResponseData“
-// @Success 500 {object} dto.Response
+// @Success 200 {object} dto.ResponseData[dto.AuthRes]
+// @Failure 400 {object} dto.Response
+// @Failure 422 {object} dto.Response
+// @Failure 500 {object} dto.Response
 // @Router /auth/login [post]
 func (api *authApi) Login(ctx *fiber.Ctx) error {
 	var loginReq dto.AuthReq
 	if err := ctx.BodyParser(&loginReq); err != nil {
 		return ctx.Status(fiber.StatusUnprocessableEntity).JSON(dto.Response{
+			Status:  fiber.StatusUnprocessableEntity,
 			Message: err.Error(),
 		})
 	}
 
 	if err := loginReq.Validate(); err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(dto.Response{
+			Status:  fiber.StatusBadRequest,
 			Message: err.Error(),
 		})
 	}
@@ -43,11 +47,13 @@ func (api *authApi) Login(ctx *fiber.Ctx) error {
 	res, err := api.authService.Login(loginReq)
 	if err != nil {
 		return ctx.Status(fiber.StatusInternalServerError).JSON(dto.Response{
+			Status:  fiber.StatusInternalServerError,
 			Message: err.Error(),
 		})
 	}
-	return ctx.Status(fiber.StatusOK).JSON(dto.ResponseData{
-		Data: res,
+	return ctx.Status(fiber.StatusOK).JSON(dto.ResponseData[dto.AuthRes]{
+		Status: fiber.StatusOK,
+		Data:   res,
 	})
 }
 
@@ -57,19 +63,23 @@ func (api *authApi) Login(ctx *fiber.Ctx) error {
 // @Accept json
 // @Produce json
 // @Param project body dto.RefreshTokenReq true "Refresh token info"
-// @Success 200 {object} dto.ResponseData
+// @Success 200 {object} dto.ResponseData[dto.AuthRes]
+// @Failure 400 {object} dto.Response
+// @Failure 422 {object} dto.Response
 // @Success 500 {object} dto.Response
 // @Router /auth/refresh-token [post]
 func (api *authApi) RefreshToken(ctx *fiber.Ctx) error {
 	var refToken dto.RefreshTokenReq
 	if err := ctx.BodyParser(&refToken); err != nil {
 		return ctx.Status(fiber.StatusUnprocessableEntity).JSON(dto.Response{
+			Status:  fiber.StatusUnprocessableEntity,
 			Message: err.Error(),
 		})
 	}
 
 	if err := refToken.Validate(); err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(dto.Response{
+			Status:  fiber.StatusBadRequest,
 			Message: err.Error(),
 		})
 	}
@@ -77,10 +87,12 @@ func (api *authApi) RefreshToken(ctx *fiber.Ctx) error {
 	res, err := api.authService.RefreshToken(refToken.RefreshToken)
 	if err != nil {
 		return ctx.Status(fiber.StatusInternalServerError).JSON(dto.Response{
+			Status:  fiber.StatusInternalServerError,
 			Message: err.Error(),
 		})
 	}
-	return ctx.Status(fiber.StatusOK).JSON(dto.ResponseData{
-		Data: res,
+	return ctx.Status(fiber.StatusOK).JSON(dto.ResponseData[dto.AuthRes]{
+		Status: fiber.StatusOK,
+		Data:   res,
 	})
 }

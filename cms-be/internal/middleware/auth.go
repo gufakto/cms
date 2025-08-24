@@ -15,14 +15,16 @@ func Authenticate(cnf *config.Config) fiber.Handler {
 		var jwtSecretKey = []byte(cnf.Token.TokenKey)
 		tokenString := ctx.Get("Authorization")
 		if tokenString == "" {
-			return ctx.Status(401).JSON(dto.Response{
+			return ctx.Status(fiber.StatusUnauthorized).JSON(dto.Response{
+				Status:  fiber.StatusUnauthorized,
 				Message: "Token is missing",
 			}) //"Token is missing"
 		}
 
 		parts := strings.Split(tokenString, " ")
 		if len(parts) != 2 || parts[0] != "Bearer" {
-			return ctx.Status(401).JSON(dto.Response{
+			return ctx.Status(fiber.StatusUnauthorized).JSON(dto.Response{
+				Status:  fiber.StatusUnauthorized,
 				Message: "Invalid token format",
 			}) // "Invalid token format"
 		}
@@ -31,13 +33,15 @@ func Authenticate(cnf *config.Config) fiber.Handler {
 			return jwtSecretKey, nil
 		})
 		if err != nil {
-			return ctx.Status(401).JSON(dto.Response{
+			return ctx.Status(fiber.StatusUnauthorized).JSON(dto.Response{
+				Status:  fiber.StatusUnauthorized,
 				Message: err.Error(),
 			}) // "Invalid token"
 		}
 
 		if !token.Valid {
-			return ctx.Status(401).JSON(dto.Response{
+			return ctx.Status(fiber.StatusUnauthorized).JSON(dto.Response{
+				Status:  fiber.StatusUnauthorized,
 				Message: "Invalid token",
 			}) // "Invalid token"
 
@@ -45,7 +49,8 @@ func Authenticate(cnf *config.Config) fiber.Handler {
 
 		claims, ok := token.Claims.(*dto.CustomClaims)
 		if !ok {
-			return ctx.Status(401).JSON(dto.Response{
+			return ctx.Status(fiber.StatusUnauthorized).JSON(dto.Response{
+				Status:  fiber.StatusUnauthorized,
 				Message: "Invalid token claims",
 			}) // "Invalid token claims"
 		}
