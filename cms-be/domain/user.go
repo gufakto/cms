@@ -3,8 +3,6 @@ package domain
 import (
 	"database/sql"
 	"time"
-
-	"github.com/gufakto/cms/dto"
 )
 
 type User struct {
@@ -17,26 +15,4 @@ type User struct {
 	CreatedAt          time.Time    `gorm:"created_at"`
 	UpdatedAt          time.Time    `gorm:"updated_at"`
 	DeletedAt          sql.NullTime `gorm:"deleted_at"`
-}
-
-type UserRepository interface {
-	GetPaginate(page int, limit int) ([]User, error)
-	Create(user *User) error
-	Update(user *User) error
-	Delete(id int64) error
-	GetByID(id int64) (User, error)
-	GetByEmail(email string) (User, error)
-}
-
-type UserService interface {
-	GetPaginate(page int, limit int) ([]dto.UserData, error)
-	Create(user *dto.UserReq) (dto.UserData, error)
-	Update(user dto.UserUpdateReq, id int64) (dto.UserData, error)
-	Delete(id int64) error
-	GetByID(id int64) (dto.UserData, error)
-}
-
-type AuthService interface {
-	Login(authReq dto.AuthReq) (dto.AuthRes, error)
-	RefreshToken(token string) (dto.AuthRes, error)
 }

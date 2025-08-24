@@ -9,17 +9,18 @@ type Menu struct {
 	UpdatedAt   string `gorm:"updated_at"`
 	DeletedAt   string `gorm:"deleted_at"`
 }
-type MenuRepository interface {
-	Create(menu *Menu) error
-	Update(menu *Menu) error
-	Delete(id int64) error
-	GetByID(id int64) (Menu, error)
-	GetByParentID(parentID int64) ([]Menu, error)
-}
-type MenuService interface {
-	Create(menu *Menu) error
-	Update(menu *Menu) error
-	Delete(id int64) error
-	GetByID(id int64) (Menu, error)
-	GetByParentID(parentID int64) ([]Menu, error)
-}
+
+// type MenuRepository interface {
+// 	Create(menu *Menu) error
+// 	Update(menu *Menu) error
+// 	Delete(id int64) error
+// 	GetByID(id int64) (Menu, error)
+// 	GetByParentID(parentID int64) ([]Menu, error)
+// }
+// type MenuService interface {
+// 	Create(menu *Menu) error
+// 	Update(menu *Menu) error
+// 	Delete(id int64) error
+// 	GetByID(id int64) (Menu, error)
+// 	GetByParentID(parentID int64) ([]Menu, error)
+// }

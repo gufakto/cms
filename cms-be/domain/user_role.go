@@ -6,11 +6,11 @@ type UserRole struct {
 	RoleID int64 `gorm:"role_id"`
 }
 
-type UserRoleRepository interface {
-	Create(userRole *UserRole) error
-	Update(userRole *UserRole) error
-	Delete(id int64) error
-	GetByID(id int64) (UserRole, error)
-	GetByUserID(userID int64) ([]UserRole, error)
-	GetByRoleID(roleID int64) ([]UserRole, error)
-}
+// type UserRoleRepository interface {
+// 	Create(userRole *UserRole) error
+// 	Update(userRole *UserRole) error
+// 	Delete(id int64) error
+// 	GetByID(id int64) (UserRole, error)
+// 	GetByUserID(userID int64) ([]UserRole, error)
+// 	GetByRoleID(roleID int64) ([]UserRole, error)
+// }

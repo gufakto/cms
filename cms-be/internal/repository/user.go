@@ -12,7 +12,16 @@ type userRepository struct {
 	db *gorm.DB
 }
 
-func NewUser(db *gorm.DB) domain.UserRepository {
+type UserRepository interface {
+	GetPaginate(page int, limit int) ([]domain.User, error)
+	Create(user *domain.User) error
+	Update(user *domain.User) error
+	Delete(id int64) error
+	GetByID(id int64) (domain.User, error)
+	GetByEmail(email string) (domain.User, error)
+}
+
+func NewUser(db *gorm.DB) UserRepository {
 	return &userRepository{
 		db: db,
 	}

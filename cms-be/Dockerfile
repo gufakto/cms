@@ -1,12 +1,9 @@
 FROM golang:1.23-alpine as build_base
 
 ENV GO111MODULE=on
-ARG GITLAB_LOGIN
-ARG GITLAB_TOKEN
 RUN apk add --update --no-cache bash ca-certificates git openssl curl
-# RUN apk add --update --no-cache bash ca-certificates git openssl curl certbot
+ENV GOPRIVATE=gitlab.com/merkleindonesia/*
 
-# RUN echo "machine gitlab.com login ${GITLAB_LOGIN} password ${GITLAB_TOKEN}" > ~/.netrc
 
 ARG cert_location=/usr/local/share/ca-certificates
 ARG HTTP_PROXY=proxy.golang.org:443,sum.golang.org:443,github.com:443

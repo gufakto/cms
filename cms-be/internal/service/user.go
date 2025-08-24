@@ -6,14 +6,23 @@ import (
 
 	"github.com/gufakto/cms/domain"
 	"github.com/gufakto/cms/dto"
+	"github.com/gufakto/cms/internal/repository"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type userService struct {
-	userRepo domain.UserRepository
+	userRepo repository.UserRepository
 }
 
-func NewUser(userRepo domain.UserRepository) domain.UserService {
+type UserService interface {
+	GetPaginate(page int, limit int) ([]dto.UserData, error)
+	Create(user *dto.UserReq) (dto.UserData, error)
+	Update(user dto.UserUpdateReq, id int64) (dto.UserData, error)
+	Delete(id int64) error
+	GetByID(id int64) (dto.UserData, error)
+}
+
+func NewUser(userRepo repository.UserRepository) UserService {
 	return &userService{
 		userRepo: userRepo,
 	}

@@ -1,0 +1,217 @@
+basePath: /api/v1
+definitions:
+  dto.AuthReq:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  dto.RefreshTokenReq:
+    properties:
+      refresh_token:
+        type: string
+    type: object
+  dto.Response:
+    properties:
+      message:
+        type: string
+    type: object
+  dto.ResponseData:
+    properties:
+      data: {}
+    type: object
+  dto.UserReq:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+    type: object
+  dto.UserUpdateReq:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+    type: object
+host: localhost:3000
+info:
+  contact:
+    email: fiber@swagger.io
+    name: API Support
+  description: This is a sample swagger for Fiber
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: CMS API Documentation
+  version: "1.0"
+paths:
+  /admin/user:
+    get:
+      consumes:
+      - application/json
+      description: Get List Data Users
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.Response'
+      security:
+      - BearerAuth: []
+      summary: Get list Users
+      tags:
+      - User
+    post:
+      consumes:
+      - application/json
+      description: User Create
+      parameters:
+      - description: Data User
+        in: body
+        name: project
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UserReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ResponseData'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.Response'
+      security:
+      - BearerAuth: []
+      summary: User Create
+      tags:
+      - User
+  /admin/user/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: User delete
+      parameters:
+      - description: user id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.Response'
+      security:
+      - BearerAuth: []
+      summary: User Delete
+      tags:
+      - User
+    put:
+      consumes:
+      - application/json
+      description: User Update
+      parameters:
+      - description: user id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: payload user
+        in: body
+        name: project
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UserUpdateReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.Response'
+      security:
+      - BearerAuth: []
+      summary: User
+      tags:
+      - User
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Auth
+      parameters:
+      - description: Login Info
+        in: body
+        name: project
+        required: true
+        schema:
+          $ref: '#/definitions/dto.AuthReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ResponseData'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.Response'
+      summary: Auth
+      tags:
+      - Auth
+  /auth/refresh-token:
+    post:
+      consumes:
+      - application/json
+      description: Refresh Token login
+      parameters:
+      - description: Refresh token info
+        in: body
+        name: project
+        required: true
+        schema:
+          $ref: '#/definitions/dto.RefreshTokenReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ResponseData'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.Response'
+      summary: Refresh Token
+      tags:
+      - Auth
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

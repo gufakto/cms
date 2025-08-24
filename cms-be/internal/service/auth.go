@@ -5,15 +5,21 @@ import (
 	"github.com/gufakto/cms/domain"
 	"github.com/gufakto/cms/dto"
 	"github.com/gufakto/cms/internal/config"
+	"github.com/gufakto/cms/internal/repository"
 	"github.com/gufakto/cms/internal/utils"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type authService struct {
-	userRepo domain.UserRepository
+	userRepo repository.UserRepository
 }
 
-func NewAuth(userRepo domain.UserRepository) domain.AuthService {
+type AuthService interface {
+	Login(authReq dto.AuthReq) (dto.AuthRes, error)
+	RefreshToken(token string) (dto.AuthRes, error)
+}
+
+func NewAuth(userRepo repository.UserRepository) AuthService {
 	return &authService{
 		userRepo: userRepo,
 	}

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/gufakto/cms/internal/component"
 	"github.com/gufakto/cms/internal/config"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -12,7 +11,7 @@ import (
 func main() {
 	fmt.Println("seed data user into users table")
 	cnf := config.Get()
-	dbConnection := component.ConnectDB(cnf)
+	dbConnection := config.NewDatabasePG(cnf)
 
 	db, err := dbConnection.DB()
 	if err != nil {

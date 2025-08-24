@@ -8,11 +8,12 @@ type RoleMenu struct {
 	UpdatedAt string `gorm:"updated_at"`
 	DeletedAt string `gorm:"deleted_at"`
 }
-type RoleMenuRepository interface {
-	Create(roleMenu *RoleMenu) error
-	Update(roleMenu *RoleMenu) error
-	Delete(id int64) error
-	GetByID(id int64) (RoleMenu, error)
-	GetByRoleID(roleID int64) ([]RoleMenu, error)
-	GetByMenuID(menuID int64) ([]RoleMenu, error)
-}
+
+// type RoleMenuRepository interface {
+// 	Create(roleMenu *RoleMenu) error
+// 	Update(roleMenu *RoleMenu) error
+// 	Delete(id int64) error
+// 	GetByID(id int64) (RoleMenu, error)
+// 	GetByRoleID(roleID int64) ([]RoleMenu, error)
+// 	GetByMenuID(menuID int64) ([]RoleMenu, error)
+// }

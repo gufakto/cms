@@ -2,22 +2,30 @@ package api
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/gufakto/cms/domain"
 	"github.com/gufakto/cms/dto"
+	"github.com/gufakto/cms/internal/service"
 )
 
 type authApi struct {
-	authService domain.AuthService
+	authService service.AuthService
 }
 
-func NewAuth(app *fiber.App, authService domain.AuthService) {
-	api := authApi{
+func NewAuth(authService service.AuthService) *authApi {
+	return &authApi{
 		authService: authService,
 	}
-	app.Post("/v1/auth/login", api.Login)
-	app.Post("/v1/auth/refresh-token", api.RefreshToken)
+
 }
 
+// @Tags Auth
+// @Summary Auth
+// @Description Auth
+// @Accept json
+// @Produce json
+// @Param project body dto.AuthReq true "Login Info"
+// @Success 200 {object} dto.ResponseData“
+// @Success 500 {object} dto.Response
+// @Router /auth/login [post]
 func (api *authApi) Login(ctx *fiber.Ctx) error {
 	var loginReq dto.AuthReq
 	if err := ctx.BodyParser(&loginReq); err != nil {
@@ -43,6 +51,15 @@ func (api *authApi) Login(ctx *fiber.Ctx) error {
 	})
 }
 
+// @Tags Auth
+// @Summary Refresh Token
+// @Description Refresh Token login
+// @Accept json
+// @Produce json
+// @Param project body dto.RefreshTokenReq true "Refresh token info"
+// @Success 200 {object} dto.ResponseData
+// @Success 500 {object} dto.Response
+// @Router /auth/refresh-token [post]
 func (api *authApi) RefreshToken(ctx *fiber.Ctx) error {
 	var refToken dto.RefreshTokenReq
 	if err := ctx.BodyParser(&refToken); err != nil {
