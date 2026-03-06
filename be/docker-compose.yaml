@@ -1,0 +1,16 @@
+version: "3.9"
+services:
+  db:
+    container_name: cms-postgres
+    image: postgres:latest
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cms"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    environment:
+      POSTGRES_USER: cms
+      POSTGRES_PASSWORD: qwe123qwe
+      POSTGRES_DB: cms
+    ports:
+      - 5432:5432

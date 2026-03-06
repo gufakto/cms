@@ -1,2 +1,5 @@
 .docker-sync/
 cms-be/tmp/
+spring/
+cms-be/
+tbs/
